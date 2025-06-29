@@ -15,7 +15,7 @@ export default function VendingMachine() {
 
   return (
     <div className="min-h-screen flex justify-center bg-white py-10 px-10">
-      <div className="w-[480px] max-w-full py-10 px-8 rounded-[2.5rem] flex flex-col items-center bg-red-600 relative">
+      <div className="w-[720px] max-w-full py-10 px-8 rounded-[2.5rem] flex flex-col items-center bg-red-600 relative">
         {/* 상단 라벨/마크 */}
         <div className="mb-4 text-3xl font-extrabold tracking-tight text-white">Vending Machine</div>
         {/* 음료 가로 카드 (흰색 카드에 라운드/그림자) */}
