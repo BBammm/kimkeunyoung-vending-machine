@@ -1,11 +1,8 @@
 import './App.css'
+import './index.css'
+import VendingMachine from './components/VendingMachine'
 
 function App() {
-  return (
-    <h1 className="text-3xl font-bold underline text-blue-500">
-      Hello Vending Machine!
-    </h1>
-  )
+  return <VendingMachine />
 }
-
 export default App
