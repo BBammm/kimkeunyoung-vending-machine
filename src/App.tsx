@@ -4,6 +4,8 @@ import VendingMachine from './components/VendingMachine'
 import { useEffect } from 'react'
 import { useVendingStore } from './store/vendingStore'
 import { initialCash, initialCard } from './utils/cashUtils'
+import { ToastContainer } from 'react-toastify'
+
 
 function App() {
   const reset = useVendingStore(s => s.reset)
@@ -16,6 +18,7 @@ function App() {
       <div className="w-[720px] max-w-full p-10 bg-white rounded-3xl shadow-2xl mb-8">
         <VendingMachine/>
       </div>
+      <ToastContainer position="top-center" autoClose={2000} />
     </div>
   )
 }

@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import type { CashUnit, Drink } from '../types/vending'
+import { initialCash, initialCard } from '../utils/cashUtils'
+
 
 type VendingState = {
   drinks: Drink[]
@@ -22,12 +24,9 @@ type VendingState = {
 }
 
 export const useVendingStore = create<VendingState>((set, get) => ({
-  drinks: [
-    // 이 부분은 VendingMachine에서 img 임포트해서 setDrinks로 넣어주는 게 맞음
-    // 여긴 dummy
-  ],
-  cash: { 100: 10, 500: 5, 1000: 10, 5000: 2, 10000: 1 },
-  card: 50000,
+  drinks: [],
+  cash: { ...initialCash },
+  card: initialCard,
   cashInput: { 100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0 },
   payMethod: null,
   paymentReady: false,
@@ -45,13 +44,11 @@ export const useVendingStore = create<VendingState>((set, get) => ({
   resetInput: () =>
     set({
       cashInput: { 100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0 },
-      payMethod: null,
-      paymentReady: false,
     }),
   resetAll: () =>
     set({
-      cash: { 100: 10, 500: 5, 1000: 10, 5000: 2, 10000: 1 },
-      card: 50000,
+      cash: { ...initialCash },
+      card: initialCard,
       cashInput: { 100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0 },
       payMethod: null,
       paymentReady: false,

@@ -6,6 +6,7 @@ import { DrinkSelector } from './DrinkSelector'
 import Payment from './Payment'
 import { useVendingStore} from '../store/vendingStore'
 import type { Drink } from '../types/vending'
+import { toast } from 'react-toastify'
 
 const drinksSeed = [
   { id: 'coke', name: '콜라', price: 1100, stock: 2, img: vendingCoke },
@@ -26,7 +27,7 @@ export default function VendingMachine() {
 
   const handleBuy = (drink: Drink) => {
     const result = buyDrink(drink.id)
-    if (typeof result === 'string') alert(result)
+    if (typeof result === 'string') toast(result)
   }
 
   return (
