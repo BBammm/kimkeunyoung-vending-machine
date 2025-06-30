@@ -27,7 +27,7 @@ export default function VendingMachine() {
 
   const handleBuy = (drink: Drink) => {
     const result = buyDrink(drink.id)
-    if (typeof result === 'string') toast(result)
+    if (result) toast[result.type](result.message)
   }
 
   return (
