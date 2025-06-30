@@ -3,6 +3,7 @@ import vendingWater from '../assets/vending_water.png'
 import vendingCoffee from '../assets/vending_coffee.png'
 import { useState } from 'react'
 import { DrinkSelector } from './DrinkSelector'
+import Payment from './Payment'
 
 const drinks = [
   { id: 'coke', name: '콜라', price: 1100, stock: 2, img: vendingCoke },
@@ -25,7 +26,9 @@ export default function VendingMachine() {
           onSelect={setSelectedId}
         />
         {/* 결제 등 UI */}
-        <div className="text-gray-400 text-xs mt-6">※ 결제, 알림 등 아래에 UI 추가</div>
+        <div className="w-full mt-4 p-8 bg-white rounded-2xl shadow-lg">
+          <Payment/>
+        </div>
       </div>
     </div>
   )

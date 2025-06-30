@@ -7,16 +7,13 @@ type CashUnit = typeof units[number]
 
 export default function Payment() {
   const { cash: cashHoldings, card: cardHolding } = useVendingStore()
-  // cashInput: {100: 0, ...}
   const [cashInput, setCashInput] = useState<Record<CashUnit, number>>({
     100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0
   })
   const [payMethod, setPayMethod] = useState<'cash' | 'card' | null>(null)
 
-  // 투입합계 계산
   const cashTotal = units.reduce((sum, unit) => sum + unit * cashInput[unit], 0)
 
-  // 버튼 증감 핸들러
   const handleIncrement = (unit: CashUnit) => {
     if (cashInput[unit] < cashHoldings[unit]) {
       setCashInput(prev => ({ ...prev, [unit]: prev[unit] + 1 }))
@@ -42,23 +39,23 @@ export default function Payment() {
   const cardDisabled = payMethod === 'cash' && cashTotal > 0
 
   return (
-    <div className="rounded-xl p-5 flex flex-col gap-5 mt-8">
+    <div className="rounded-xl flex flex-col gap-5 mt-8">
       {/* 현금 영역 */}
       <div className="mb-2">
         <div className="font-bold text-gray-800 mb-2">현금 투입</div>
         <div className="flex gap-8 justify-center mt-2 mb-3">
           {units.map(unit => (
             <div key={unit} className="flex flex-col items-center">
-              <span className="font-bold text-gray-700 mb-2">{unit.toLocaleString()}원</span>
-              <div className="w-20 h-30 bg-gray-100 rounded-xl shadow flex flex-col justify-between items-center py-2">
+              <span className="font-bold text-xs text-gray-700 mb-2">{unit.toLocaleString()}원</span>
+              <div className="w-10 h-30 bg-gray-100 rounded-xl shadow flex flex-col justify-between items-center py-2">
                 <button
-                  className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full text-lg font-bold hover:bg-red-200 disabled:opacity-40"
+                  className="w-2 h-2 flex items-center justify-center bg-gray-200 rounded-full text-xs font-bold hover:bg-red-200 disabled:opacity-40"
                   onClick={() => handleIncrement(unit)}
                   disabled={cashDisabled || cashInput[unit] >= cashHoldings[unit]}
                 >▲</button>
                 <span className="text-2xl font-mono text-gray-600">{cashInput[unit]}</span>
                 <button
-                  className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full text-lg font-bold hover:bg-red-200 disabled:opacity-40"
+                  className="w-2 h-2 flex items-center justify-center bg-gray-200 rounded-full text-xs font-bold hover:bg-red-200 disabled:opacity-40"
                   onClick={() => handleDecrement(unit)}
                   disabled={cashDisabled || cashInput[unit] === 0}
                 >▼</button>
