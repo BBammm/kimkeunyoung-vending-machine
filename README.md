@@ -15,7 +15,7 @@ nvm install           # 프로젝트 권장 버전 설치
 nvm use 22.14.0       # 권장 버전으로 전환
 ```
 
-### 프로젝트 실행방법
+### 2. 프로젝트 실행방법
 ```bash
 npm install
 npm run dev
