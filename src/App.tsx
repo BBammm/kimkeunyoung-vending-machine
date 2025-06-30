@@ -8,6 +8,7 @@ import { initialCash, initialCard } from './utils/cashUtils'
 function App() {
   const reset = useVendingStore(s => s.reset)
   useEffect(() => {
+    // 앱이 마운트될 때만 한번만 초기화
     reset(initialCash, initialCard)
   }, [reset])
   return (
@@ -18,4 +19,5 @@ function App() {
     </div>
   )
 }
+
 export default App

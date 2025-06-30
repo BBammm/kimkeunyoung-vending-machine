@@ -3,120 +3,92 @@ import { useVendingStore } from '../store/vendingStore'
 const units = [100, 500, 1000, 5000, 10000] as const
 type CashUnit = typeof units[number]
 
-export default function Payment({
-  onPaymentReady,
-  paymentReady,
-  payMethod,
-  setPayMethod,
-  cashInput,
-  setCashInput,
-}: {
-  onPaymentReady: (ready: boolean) => void
-  paymentReady: boolean
-  payMethod: 'cash' | 'card' | null
-  setPayMethod: (method: 'cash' | 'card' | null) => void
-  cashInput: Record<CashUnit, number>
-  setCashInput: React.Dispatch<React.SetStateAction<Record<CashUnit, number>>>
-}) {
-  const { cash: cashHoldings, card: cardHolding } = useVendingStore()
+export default function Payment() {
+  const {
+    cash, card, cashInput, payMethod, paymentReady,
+    setPayMethod, setPaymentReady, setCashInput, resetInput, resetAll
+  } = useVendingStore()
 
-  // 투입합계 계산
   const cashTotal = units.reduce((sum, unit) => sum + unit * cashInput[unit], 0)
 
-  // 권종 증감
   const handleIncrement = (unit: CashUnit) => {
-    if (cashInput[unit] < cashHoldings[unit]) {
-      setCashInput(prev => ({ ...prev, [unit]: prev[unit] + 1 }))
+    if (cashInput[unit] < cash[unit]) {
+      setCashInput(unit, cashInput[unit] + 1)
       setPayMethod('cash')
-      onPaymentReady(false) // 아직 결제 준비 상태 아님
+      setPaymentReady(false)
     }
   }
   const handleDecrement = (unit: CashUnit) => {
     if (cashInput[unit] > 0) {
-      setCashInput(prev => ({ ...prev, [unit]: prev[unit] - 1 }))
+      setCashInput(unit, cashInput[unit] - 1)
       setPayMethod('cash')
-      onPaymentReady(false)
+      setPaymentReady(false)
     }
   }
-
-  // 현금 투입 버튼 클릭: 결제 준비
   const handleCashReady = () => {
     if (cashTotal > 0) {
       setPayMethod('cash')
-      onPaymentReady(true)
+      setPaymentReady(true)
     }
   }
-
-  // 현금 입력 초기화
-  const handleCashReset = () => {
-    setCashInput({ 100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0 })
-    setPayMethod(null)
-    onPaymentReady(false)
-  }
-
-  // 카드 결제 준비
   const handleCardReady = () => {
     setPayMethod('card')
-    setCashInput({ 100: 0, 500: 0, 1000: 0, 5000: 0, 10000: 0 })
-    onPaymentReady(true)
+    resetInput()
+    setPaymentReady(true)
   }
 
-  // 각 방식 비활성화
   const cashDisabled = payMethod === 'card'
   const cardDisabled = payMethod === 'cash' && cashTotal > 0
 
   return (
-    <div className="rounded-xl flex flex-col gap-5 mt-8">
-      {/* 현금 영역 */}
-      <div className="mb-2">
-        <div className="font-bold text-gray-800 mb-2">현금 투입</div>
-        <div className="flex gap-8 justify-center mt-2 mb-3">
-          {units.map(unit => (
-            <div key={unit} className="flex flex-col items-center">
-              <span className="font-bold text-xs text-gray-700 mb-2">{unit.toLocaleString()}원</span>
-              <div className="w-10 h-30 bg-gray-100 rounded-xl shadow flex flex-col justify-between items-center py-2">
-                <button
-                  className="w-2 h-2 flex items-center justify-center bg-gray-200 rounded-full text-xs font-bold hover:bg-red-200 disabled:opacity-40"
-                  onClick={() => handleIncrement(unit)}
-                  disabled={cashDisabled || cashInput[unit] >= cashHoldings[unit]}
-                  type="button"
-                >▲</button>
-                <span className="text-2xl font-mono text-gray-600">{cashInput[unit]}</span>
-                <button
-                  className="w-2 h-2 flex items-center justify-center bg-gray-200 rounded-full text-xs font-bold hover:bg-red-200 disabled:opacity-40"
-                  onClick={() => handleDecrement(unit)}
-                  disabled={cashDisabled || cashInput[unit] === 0}
-                  type="button"
-                >▼</button>
-              </div>
-              <span className="text-xs text-gray-500 mt-1">{cashHoldings[unit]}장 보유</span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 flex justify-end items-center gap-4">
-          <span className="text-base font-semibold text-red-600">
-            투입합계: {cashTotal.toLocaleString()}원
-          </span>
-          <button
-            className="ml-2 px-4 py-1 rounded bg-gray-300 hover:bg-gray-400 text-white font-semibold shadow"
-            onClick={handleCashReset}
-            disabled={cashDisabled && cashTotal === 0}
-            type="button"
-          >
-            초기화
-          </button>
-          <button
-            className="ml-2 px-4 py-1 rounded bg-green-500 hover:bg-green-600 text-white font-semibold shadow"
-            onClick={handleCashReady}
-            disabled={cashDisabled || cashTotal === 0 || paymentReady}
-            type="button"
-          >
-            현금 투입
-          </button>
-        </div>
+    <div className="rounded-xl flex flex-col gap-5">
+      {/* 전체 결제 초기화 */}
+      <div className="flex justify-end mb-4">
+        <button
+          className="px-3 py-2 text-sm rounded bg-red-600 hover:bg-red-700 text-white font-bold shadow"
+          onClick={resetAll}
+          type="button"
+        >
+          결제 초기화
+        </button>
       </div>
-
-      {/* 카드 영역 */}
+      <div className="font-bold text-gray-800 mb-2">현금 투입</div>
+      <div className="flex gap-8 justify-center mt-2 mb-3">
+        {units.map(unit => (
+          <div key={unit} className="flex flex-col items-center">
+            <span className="font-bold text-xs text-gray-700 mb-2">{unit.toLocaleString()}원</span>
+            <div className="w-10 h-30 bg-gray-100 rounded-xl shadow flex flex-col justify-between items-center py-2">
+              <button
+                className="w-5 h-5 flex items-center justify-center bg-gray-500 rounded-full text-xs font-bold hover:bg-gray-800 disabled:opacity-40"
+                onClick={() => handleIncrement(unit)}
+                disabled={cashDisabled || cashInput[unit] >= cash[unit]}
+                type="button"
+              >▲</button>
+              <span className="text-2xl font-mono text-gray-600">{cashInput[unit]}</span>
+              <button
+                className="w-5 h-5 flex items-center justify-center bg-gray-500 rounded-full text-xs font-bold hover:bg-gray-800 disabled:opacity-40"
+                onClick={() => handleDecrement(unit)}
+                disabled={cashDisabled || cashInput[unit] === 0}
+                type="button"
+              >▼</button>
+            </div>
+            <span className="text-xs text-gray-500 mt-1">{cash[unit]}장 보유</span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 flex justify-end items-center gap-4">
+        <span className="text-base font-semibold text-red-600">
+          투입합계: {cashTotal.toLocaleString()}원
+        </span>
+        <button
+          className="ml-2 px-4 py-1 rounded bg-green-500 hover:bg-green-600 text-white font-semibold shadow"
+          onClick={handleCashReady}
+          disabled={cashDisabled || cashTotal === 0 || paymentReady}
+          type="button"
+        >
+          현금 투입
+        </button>
+      </div>
       <div>
         <div className="font-bold text-gray-800 mb-2">카드 결제</div>
         <button
@@ -126,7 +98,7 @@ export default function Payment({
           disabled={cardDisabled || paymentReady}
           type="button"
         >카드 결제</button>
-        <span className="ml-3 text-gray-500 text-sm">보유잔액: {cardHolding.toLocaleString()}원</span>
+        <span className="ml-3 text-gray-500 text-sm">보유잔액: {card.toLocaleString()}원</span>
       </div>
     </div>
   )
